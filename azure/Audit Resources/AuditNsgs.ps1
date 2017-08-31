@@ -32,7 +32,7 @@ foreach ($sub in $subs)
         foreach ($nic in $nics)
         {
             $nicString = ($nic.Id -split '/')[-1]
-            $customPsObject | Add-Member -MemberType NoteProperty -Name ("AssignedNic-" + $i) -Value $nicString
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("AssignedNic-" + $i) -Value $subnetString
             $i++
         }
 

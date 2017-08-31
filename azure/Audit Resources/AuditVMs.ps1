@@ -5,10 +5,10 @@ $allResources = @()
 foreach ($sub in $subs) 
 {
     Select-AzureRmSubscription -SubscriptionId $sub.Id
-    $vmSub = Get-AzureRmVM
-    foreach ($vm in $vmSub)
+    $resources = Get-AzureRmVM
+    foreach ($vm in $resources)
     {
-        $customVmObject = New-Object -TypeName PsObject
+        $customPsObject = New-Object -TypeName PsObject
         
         If ($vm.StorageProfile.OsDisk.ManagedDisk.Id -ne $null)
         {
@@ -24,10 +24,10 @@ foreach ($sub in $subs)
         $dataDiskS = $vm.StorageProfile.DataDisks
         $subscription = Get-AzureRmSubscription -SubscriptionId ($vm.Id -split '/')[2]
         
-        $customVmObject | Add-Member -MemberType NoteProperty -Name VmName -Value $vm.Name
-        $customVmObject | Add-Member -MemberType NoteProperty -Name RG -Value $vm.ResourceGroupName
-        $customVmObject | Add-Member -MemberType NoteProperty -Name Location -Value $vm.Location
-        $customVmObject | Add-Member -MemberType NoteProperty -Name Size -Value $vm.HardwareProfile.VmSize
+        $customPsObject | Add-Member -MemberType NoteProperty -Name VmName -Value $vm.Name
+        $customPsObject | Add-Member -MemberType NoteProperty -Name RG -Value $vm.ResourceGroupName
+        $customPsObject | Add-Member -MemberType NoteProperty -Name Location -Value $vm.Location
+        $customPsObject | Add-Member -MemberType NoteProperty -Name Size -Value $vm.HardwareProfile.VmSize
 
         $i = 0
         foreach ($adapter in $nics)
@@ -49,15 +49,15 @@ foreach ($sub in $subs)
             }
             
             $availabilitySet = ($vm.AvailabilitySetReference.Id -split '/')[-1]        
-            $customVmObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-Vnet") -Value $vnet
-            $customVmObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-Subnet")  -Value $subnet
-            $customVmObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-PrivateIpAddress") -Value $privateIpAddress
-            $customVmObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-PublicIpAddress") -Value $publicIpAddress
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-Vnet") -Value $vnet
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-Subnet")  -Value $subnet
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-PrivateIpAddress") -Value $privateIpAddress
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("nic-" + $i + "-PublicIpAddress") -Value $publicIpAddress
             $i++
         }
 
-        $customVmObject | Add-Member -MemberType NoteProperty -Name AvailabilitySet -Value $availabilitySet
-        $customVmObject | Add-Member -MemberType NoteProperty -Name osDisk -Value $osDiskStorageAccount
+        $customPsObject | Add-Member -MemberType NoteProperty -Name AvailabilitySet -Value $availabilitySet
+        $customPsObject | Add-Member -MemberType NoteProperty -Name osDisk -Value $osDiskStorageAccount
 
         $i = 0
         foreach ($dataDisk in $dataDiskS)
@@ -70,12 +70,12 @@ foreach ($sub in $subs)
             {
                 $dataDiskHost = ([uri]($dataDisk.Vhd.Uri)).Host
             }
-            $customVmObject | Add-Member -MemberType NoteProperty -Name ("dataDisk-" + $i) -Value $dataDiskHost
+            $customPsObject | Add-Member -MemberType NoteProperty -Name ("dataDisk-" + $i) -Value $dataDiskHost
             $i++
         }
         
-        $customVmObject | Add-Member -MemberType NoteProperty -Name Subscription -Value $subscription.Name
-        $allResources += $customVmObject
+        $customPsObject | Add-Member -MemberType NoteProperty -Name Subscription -Value $subscription.Name
+        $allResources += $customPsObject
     }
 }
 
