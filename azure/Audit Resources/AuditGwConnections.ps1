@@ -1,5 +1,5 @@
 ﻿$subs = Get-AzureRmSubscription
-$rg = "CORE-PROD"
+$rg = "rg"
 
 $allResources = @()
 
