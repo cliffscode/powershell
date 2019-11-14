@@ -1,6 +1,6 @@
-﻿$subs = Get-AzureRmSubscription
+﻿$subs = Get-AzureRmSubscription <# gets the subscription ID, subscription name, and home tenant for subscriptions that the current account can access #>
 
-$allResources = @()
+$allResources = @() <# Array SubExpression operator - allResources as an array #>
 
 foreach ($sub in $subs) 
 {
@@ -21,7 +21,7 @@ foreach ($sub in $subs)
         $customPsObject | Add-Member -MemberType NoteProperty -Name Sku -Value $resource.Sku
         $customPsObject | Add-Member -MemberType NoteProperty -Name ResourceId -Value $resource.ResourceId
         $customPsObject | Add-Member -MemberType NoteProperty -Name Subscription -Value $subscription.Name
-        $allResources += $customPsObject
+        $allResources += $customPsObject <# Appends customPsObject to the allResources array #>
 
     }
        
